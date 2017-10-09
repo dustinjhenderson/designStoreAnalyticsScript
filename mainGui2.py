@@ -1,5 +1,17 @@
-#Dustin Henderson 
-#testing opening a file in with tinker
+'''
+File Name:			mainGui2.py
+
+Engineer(s):		Dustin Henderson
+
+Last Edit:			10/9/17
+
+Short Description:	This script is used to analise the analytics files from the cloud.altera.com design store. The script presents 
+*					the options to the user in an easy to use gui. There are two main functions in the script. The first function
+*					reads the input file and creates new excell sheets organising the data. This includes the number of downloads
+*					by catigory, design, device family, and development kit. The second function reads the input file for 
+*					documentation links. The links are then checked. If the link is dead or no documentation exsists for the 
+*					project the referance design name and are added to a new sheet of the output xlsx file.
+'''
 
 print "***** Starting Up *****"
 try:
