@@ -484,49 +484,71 @@ class Application(Frame):
 			self.alerts = self.alerts + "INFO: Documentation URLs will be checked.\n"	#If the check links check box is checked add the info to the alerts string
 		if(self.alerts == ""):
 			self.alerts = "*** ERROR: No Option Selected ***"							#If none of the boxes are checked 
-		self.alertField.delete(0.0, END)												#
-		self.alertField.insert(0.0, self.alerts)										#
+		self.alertField.delete(0.0, END)												#Clear the alerts text field of any text
+		self.alertField.insert(0.0, self.alerts)										#Display the string alerts in the alerts text field
 	
+	'''
+	Def Name:		addText
+	*
+	Arguments:		self 	self contains the varibles with in the class Application
+	*				message	the string that needs to be added to the alert text field
+	*
+	Returns:		NA 		all changes are done under the class
+	*
+	Description:	This def refreshes the text in the alerts text field in addition to adding any message. This should be used for adding text like INFO:
+	*				and Errors to the alerts text field
+	'''
 	def addText(self, message):
-		self.alerts = self.alerts + message + "\n"
-		self.alertField.delete(0.0, END)
-		self.alertField.insert(0.0, self.alerts)
+		self.alerts = self.alerts + message + "\n"	#add the message sting to the alerts sting
+		self.alertField.delete(0.0, END)			#clear the alerts text field
+		self.alertField.insert(0.0, self.alerts)	#display the alerts sting in the alerts text field
 	
+	'''
+	Def Name:		run
+	*
+	Arguments:		self 	self contains the varibles with in the class Application
+	*
+	Returns:		NA 		all changes are done under the class
+	*
+	Description:	This def is started by clicking the run button. This def launches the analytics script and the linkCheck script baised off of the checkboxes
+	*				with in the gui. There are many error codes that will display if there are problems running the other function the def calls. This def also
+	*				includes a class with in it to start a scond GUI that operates the abort button. This class and gui is only launched if the check links option
+	*				is selected
+	'''
 	def run(self):
-		if(self.analytics.get()):
-			if (("xlsx" or "XLSX") in self.inputFileLoc):
-				print "already in xlsx"
+		if(self.analytics.get()):															#if the analytics check box is checked run the convertion then the analytics
+			if (("xlsx" or "XLSX") in self.inputFileLoc):									#check if the input file is formated as an xlsx
+				print "already in xlsx"														
 				self.addText("INFO: file already in xlsx format")
-				if(copyXLSX(self.inputFileLoc, self.saveLoc) == False):
+				if(copyXLSX(self.inputFileLoc, self.saveLoc) == False):						#copy and rename the file to the ouput location. If it fails let the user know.
 					self.addText("*** ERROR: Can Not Write to Output Directory ***\nINFO: Try checking if the output directory is writeable")
 				else:
 					self.addText("INFO: Copy Done")
-			elif(("csv" or "CSV") in self.inputFileLoc):
+			elif(("csv" or "CSV") in self.inputFileLoc):									#check if the input file is in CSV format
 				print "CSV"
 				self.addText("INFO: File in csv format\nINFO: Starting convertion")
-				if(convertToXlsx(self.inputFileLoc, self.saveLoc) == False):
+				if(convertToXlsx(self.inputFileLoc, self.saveLoc) == False):				#convert and rename the csv file to xlsx format. If it fails alert the user
 					self.addText("*** ERROR: Can Not Convert CSV to XLSX! ***\nINFO: Try checking if the output directory is writeable")
 				else:
-					self.addText("INFO: Convertion done\n")
+					self.addText("INFO: Convertion done")
 			else:
 				self.addText("*** ERROR: Invalid File Format ***")
 				print "Invalid File Format"
 			self.addText("INFO: Starting Analytics")
-			runAnalytics(self.saveLoc)
+			runAnalytics(self.saveLoc)														#After the convertion is done run the analytics script.
 			self.addText("INFO: Finished Running Analytics")
-		if(self.checkDocs.get()):
+		if(self.checkDocs.get()):															#If the check documentation box is checked. launch the abort button gui then run the check links def
 			self.addText("INFO: Starting link check")
+			'''
+			subApp class is used to launch the seperate but nested abort button gui.
+			'''
 			class subApp(Frame):	
 				def __init__(sub, master):
 					"""Inits the frame"""
 					Frame.__init__(sub, master)
 					sub.timeCount = 0
 					sub.grid()
-					#t = threading.Thread(target = sub.create)
-					#t = threading.Thread(target = testFunctionTime)
-					#t.start()
 					sub.create()
-					#sub.testFunctionTime()
 				
 				def create(sub):
 					sub.abortButton = Button(sub, text = "ABORT")
@@ -539,24 +561,24 @@ class Application(Frame):
 					abort.destroy()
 			
 			print "runningLinks"
-			bool = threading.Event()											#creates a flag that can comunicate between threds
-			abort = Tk()
-			abort.title("Abort")
-			abort.geometry("200x50")
-			app2 = subApp(abort)
-			t = threading.Thread(target = abort.mainloop)						#adds the second gui to the thread count
-			t = threading.Thread(target = linkCheck, args = (self.saveLoc, bool))		#adds the check links to the other gui
-			t.start()
+			bool = threading.Event()															#creates a flag named bool that can comunicate between threds
+			abort = Tk()																		#creates a new gui called abort for the abort button/window
+			abort.title("Abort")																#Title the new gui window abort
+			abort.geometry("200x50")															#set the size of the abort window
+			app2 = subApp(abort)																#get ready to launch the gui
+			t = threading.Thread(target = abort.mainloop)										#add the second gui to the thread count
+			t = threading.Thread(target = linkCheck, args = (self.saveLoc, bool))				#add the check links to a seperate thread
+			t.start()																			#launch the abort gui and the linkCheck script in a seperate thread
 		#print "Run Forest Run!\n"
 
 '''***********************************************************************************************************************'''
 '''********************************************* MAIN LOGIC CALL *********************************************************'''
 '''***********************************************************************************************************************'''
 		
-gui = Tk()
-gui.title("Design Store Analytics")
-gui.geometry("600x450")
+gui = Tk()									#new gui named gui
+gui.title("Design Store Analytics")			#title the window "Design Store Analytics"
+gui.geometry("600x450")						#set the size of the window
 
-app = Application(gui)
+app = Application(gui)						#get ready to launch the gui
 
-gui.mainloop()
+gui.mainloop()								#launch the gui
