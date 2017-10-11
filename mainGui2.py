@@ -10,7 +10,7 @@ Short Description:	This script is used to analise the analytics files from the c
 *					reads the input file and creates new excell sheets organising the data. This includes the number of downloads
 *					by catigory, design, device family, and development kit. The second function reads the input file for 
 *					documentation links. The links are then checked. If the link is dead or no documentation exsists for the 
-*					project the referance design name and are added to a new sheet of the output xlsx file.
+*					project the referance design name and are added to a new sheet of the output xlsx file. This is Sree's updates.
 '''
 
 print "***** Starting Up *****"
